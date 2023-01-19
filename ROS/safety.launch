@@ -1,0 +1,31 @@
+<launch>
+	<arg name="en_debug" default="true" doc="Debug level on ROS debug"/>
+	<arg name="all_motors_sim" default="false" doc="Simulate moving of motors"/>
+	
+	
+	<env name="ROSCONSOLE_FORMAT" value="[${severity}] [${time}] [${node}]: ${message}"/>
+	
+	
+	
+	<node
+		name="ultrasound_collision_detection"
+		pkg="wc_main"
+		type="ultrasound_collision_detection"
+		output="screen"
+	>
+		<param name="all_motors_sim" type="bool" value="$(arg all_motors_sim)"/>
+		
+		<!-- Input topics -->
+		<remap from="in_cmd" to="/wc/cmd"/>
+		<!-- Output topics -->
+		<remap from="out_cmd" to="/wc/safe_cmd"/>
+	</node>
+	<node
+		if="$(arg en_debug)"
+		name="set_log_level__ultrasound_collision_detection"
+		pkg="rosservice"
+		type="rosservice"
+		args="call /ultrasound_collision_detection/set_logger_level '{logger: 'ros.wc_main', level: 'debug'}'"
+	/>
+	
+</launch>
